@@ -2454,6 +2454,9 @@ class Workflow:
                     command = create_command(command_list)
 
                     modDriverFile = self.default_values['modDriverFile']  # noqa: N806
+                    # createStandardUQ_Input writes sc_driver.bat on Windows local runs
+                    if platform.system() == 'Windows' and self.run_type == 'runningLocal':
+                        modDriverFile = modDriverFile + '.bat'  # noqa: N806
                     # print(f"DL_COMMAND TO ADD {command} to {modDriverFile}")
                     with open(modDriverFile, 'a', newline='\n', encoding='utf-8') as f:  # noqa: PTH123
                         f.write(command + '\n')
@@ -3534,9 +3537,10 @@ class Workflow:
                                     )
 
                                     r2d_res_dv.update({
-                                        f'R2Dres_mean_RepairCost': repair_cost_data['mean'],
-                                        f'R2Dres_std_RepairCost': repair_cost_data['std']
+                                        f'R2Dres_mean_RepairCost_loss_ratio': repair_cost_data['mean'],
+                                        f'R2Dres_std_RepairCost_loss_ratio': repair_cost_data['std']
                                     })                                        
+
 
                                     if cost_unit == 'loss_ratio' and np.abs(replacement_cost-1.0)>1e-5:
                                         r2d_res_dv.update({
